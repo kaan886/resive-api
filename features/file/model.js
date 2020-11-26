@@ -380,10 +380,13 @@ async function checkProjectAccess(userId, projectId, accessType) {
   if (!project) {
     throw new errors.FileProjectNotExistError();
   }
-  if ((!accessType || accessType === 'owner') && userId !== project.projectOwner) {
+  if (accessType === 'owner' && userId !== project.projectOwner) {
     throw new errors.FileProjectNotAuthorizedError();
   }
-  if ((!accessType || accessType === 'contributor') && project.projectContributorIds.includes(userId)) {
+  if (accessType === 'contributor' && !project.projectContributorIds.includes(userId)) {
+    throw new errors.FileProjectNotAuthorizedError();
+  }
+  if (!accessType && userId !== project.projectOwner && !project.projectContributorIds.includes(userId)) {
     throw new errors.FileProjectNotAuthorizedError();
   }
   return project;
