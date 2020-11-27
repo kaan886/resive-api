@@ -10,6 +10,7 @@ const app = express();
 app.use(require('./middlewares/augmentResponse'));
 app.use(require('cors')());
 app.use(require('body-parser').json());
+app.use(require('body-parser').urlencoded());
 app.use(require('./middlewares/parseToken'));
 
 app.use('/files', require('./features/file/router'));

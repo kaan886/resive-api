@@ -255,9 +255,11 @@ exports.getFileContent = async (session, {projectId, fileId, version}) => {
   try {
     const params = {
       TableName: process.env.AWS_DYNAMODB_FILES_TABLE_NAME,
-      ProjectionExpression: '#fileVersion',
+      ProjectionExpression: '#fileName, #fileOrignalName, #fileVersion',
       Key: {fileId, projectId},
       ExpressionAttributeNames: {
+        '#fileName': 'fileName',
+        '#fileOrignalName': 'fileOriginalName',
         '#fileVersion': 'fileVersion',
       },
     };
@@ -276,7 +278,10 @@ exports.getFileContent = async (session, {projectId, fileId, version}) => {
       Bucket: process.env.AWS_S3_PROJECTS_BUCKET,
       Key: generateS3BucketObjectKey(projectId, fileId, !version || version === 'latest' ? file.fileVersion : version),
     };
-    return s3.getObject(params).createReadStream();
+    return {
+      file,
+      stream: s3.getObject(params).createReadStream(),
+    };
   } catch (e) {
     throw new UnknownError(e);
   }

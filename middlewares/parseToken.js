@@ -2,7 +2,8 @@ const AWS = require('aws-sdk');
 const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider();
 
 const parseToken = async (req, res, next) => {
-  const token = req.get('Authorization')?.split(' ')?.[1];
+  const token = req.get('Authorization')?.split(' ')?.[1] ?? req.body?.accessToken;
+
   if (token) {
     try {
       const params = {AccessToken: token};

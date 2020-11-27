@@ -23,7 +23,7 @@ exports.getFile = async (req, res, next) => {
 exports.getFileContent = async (req, res, next) => {
   try {
     const result = await model.getFileContent(req.session, {...req.params, ...req.query});
-    result.pipe(res);
+    result.stream.pipe(res);
   } catch (e) {
     next(e);
   }
@@ -65,6 +65,17 @@ exports.postFileActivities = async (req, res, next) => {
   }
 };
 
+exports.postFileContentRequest = async (req, res, next) => {
+  try {
+    const result = await model.getFileContent(req.session, {...req.body, ...req.params, ...req.query});
+    console.log(result.file);
+    res.set('Content-Disposition', `attachment;filename=${getFileNameWithExtension(result.file)}`);
+    result.stream.pipe(res);
+  } catch (e) {
+    next(e);
+  }
+};
+
 exports.postFiles = async (req, res, next) => {
   try {
     const result = await model.createFile(req.session, {...req.body, upload: req.file});
@@ -86,3 +97,8 @@ exports.putFileVersionKeep = async (req, res, next) => {
     next(e);
   }
 };
+
+function getFileNameWithExtension(file) {
+  const extension = file?.fileOriginalName?.split('.')?.pop() ?? '';
+  return extension ? `${file.fileName}.${extension}` : file.fileName;
+}

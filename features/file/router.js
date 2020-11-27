@@ -51,6 +51,8 @@ router.route('/:fileId/activities').post(
 
 router.route('/:fileId/content').get(controllers.getFileContent);
 
+router.route('/:fileId/content-request').post(controllers.postFileContentRequest);
+
 router
   .route('/:fileId/versions/:version/keep')
   .put(validateSchema({properties: {keep: {type: 'boolean'}}, required: ['keep']}), controllers.putFileVersionKeep);
