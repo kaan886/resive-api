@@ -68,7 +68,6 @@ exports.postFileActivities = async (req, res, next) => {
 exports.postFileContentRequest = async (req, res, next) => {
   try {
     const result = await model.getFileContent(req.session, {...req.body, ...req.params, ...req.query});
-    console.log(result.file);
     res.set('Content-Disposition', `attachment;filename=${getFileNameWithExtension(result.file)}`);
     result.stream.pipe(res);
   } catch (e) {
