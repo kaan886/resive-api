@@ -99,5 +99,5 @@ exports.putFileVersionKeep = async (req, res, next) => {
 
 function getFileNameWithExtension(file) {
   const extension = file?.fileOriginalName?.split('.')?.pop() ?? '';
-  return extension ? `${file.fileName}.${extension}` : file.fileName;
+  return encodeURI(extension ? `${file.fileName}.${extension}` : file.fileName);
 }
